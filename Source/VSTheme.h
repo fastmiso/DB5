@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, VSTextCaseTransform) {
 - (NSInteger)integerForKey:(NSString *)key;
 - (CGFloat)floatForKey:(NSString *)key;
 - (UIImage *)imageForKey:(NSString *)key; /*Via UIImage imageNamed:*/
-- (UIColor *)colorForKey:(NSString *)key; /*123ABC or #123ABC: 6 digits, leading # allowed but not required*/
+- (UIColor *)colorForKey:(NSString *)key; /*123ABC or #123ABC: 6 digits, leading # allowed but not required; rgba(r,g,b,a): any spacing within parens, either float or int color components*/
 - (UIEdgeInsets)edgeInsetsForKey:(NSString *)key; /*xTop, xLeft, xRight, xBottom keys*/
 - (UIFont *)fontForKey:(NSString *)key; /*x and xSize keys*/
 - (CGPoint)pointForKey:(NSString *)key; /*xX and xY keys*/

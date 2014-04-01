@@ -10,7 +10,9 @@
 
 
 static BOOL stringIsEmpty(NSString *s);
+static UIColor *colorWithString(NSString *string);
 static UIColor *colorWithHexString(NSString *hexString);
+static UIColor *colorWithRGBAString(NSString *rgbaString);
 
 
 @interface VSTheme ()
@@ -117,7 +119,7 @@ static UIColor *colorWithHexString(NSString *hexString);
 		return cachedColor;
     
 	NSString *colorString = [self stringForKey:key];
-	UIColor *color = colorWithHexString(colorString);
+	UIColor *color = colorWithString(colorString);
 	if (color == nil)
 		color = [UIColor blackColor];
 
@@ -259,6 +261,52 @@ static UIColor *colorWithHexString(NSString *hexString);
 
 static BOOL stringIsEmpty(NSString *s) {
 	return s == nil || [s length] == 0;
+}
+
+
+static UIColor *colorWithString(NSString *string) {
+
+    BOOL isRGBAFormat = [string hasPrefix:@"rgba"];
+
+    if (isRGBAFormat) {
+        return colorWithRGBAString(string);
+    }
+
+    return colorWithHexString(string);
+}
+
+
+static UIColor *colorWithRGBAString(NSString *rgbaString) {
+
+    /*Somewhat picky. This function will return black unless it gets "rgba(rVal,gVal,bVal,aVal)". Spaces in parens OK; either float or int color comonents.*/
+
+    if (stringIsEmpty(rgbaString)) {
+		return [UIColor blackColor];
+    }
+
+    NSCharacterSet *parens = [NSCharacterSet characterSetWithCharactersInString:@"()"];
+    NSArray *rgbaStringComponents = [rgbaString componentsSeparatedByCharactersInSet:parens];
+    if (2 > [rgbaStringComponents count]) {
+        return [UIColor blackColor];
+    }
+
+    NSString *rgbaToken = [rgbaStringComponents firstObject];
+    if (![rgbaToken isEqualToString:@"rgba"]) {
+		return [UIColor blackColor];
+    }
+	
+    NSString *rgbaValueString = [rgbaStringComponents objectAtIndex:1];
+    NSArray *rgbaValues = [rgbaValueString componentsSeparatedByString:@","];
+    if (4 != [rgbaValues count]) {
+        return [UIColor blackColor];
+    }
+
+    CGFloat red = [[rgbaValues objectAtIndex:0] floatValue];
+    CGFloat green = [[rgbaValues objectAtIndex:1] floatValue];
+    CGFloat blue = [[rgbaValues objectAtIndex:2] floatValue];
+    CGFloat alpha = [[rgbaValues objectAtIndex:3] floatValue];
+
+	return [UIColor colorWithRed:(CGFloat)red/255.0f green:(CGFloat)green/255.0f blue:(CGFloat)blue/255.0f alpha:alpha];
 }
 
 
